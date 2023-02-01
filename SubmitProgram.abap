@@ -21,3 +21,5 @@
       CATCH cx_salv_bs_sc_runtime_info INTO DATA(e_txt).
     ENDTRY.
     r_data = REF #( <alv> ).
+    
+    cl_salv_bs_runtime_info=>clear_all( ).
