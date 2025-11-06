@@ -1,13 +1,17 @@
 REPORT zdemo001.
 
-  DATA:
-  lv_jobname    TYPE tbtcjob-jobname VALUE 'Z_SAMPLE_JOB', "JOB Name
+ DATA:
+  lv_jobname    TYPE tbtcjob-jobname, "JOB Name
   lv_jobcount   TYPE tbtcjob-jobcount,
-  lv_auth_user  TYPE sy-uname VALUE 'USERNAE', " User who will run the job
-  lv_report     TYPE sy-repid VALUE 'ZSD_R_STOCK'.
+  lv_auth_user  TYPE sy-uname VALUE 'EKARABULUT', " User who will run the job
+  lv_report     TYPE sy-repid VALUE 'ZEK_DEMO00002',
+  lv_variant    TYPE RALDB-VARIANT VALUE 'TEST_VARI',
+  lt_rsparams   TYPE  TABLE OF RSPARAMS,
+  lt_varit      TYPE TABLE OF varit.
 
 START-OF-SELECTION.
 
+   lv_jobname = |ZJOB_NAME_{ sy-uzeit }|. "Dynamic JobName
   " 1. Create the job (Header)
   CALL FUNCTION 'JOB_OPEN'
     EXPORTING
@@ -20,6 +24,22 @@ START-OF-SELECTION.
       jobname_missing  = 3
       OTHERS           = 4.
 
+   "Add Variant Parameters.
+   lt_rsparams = VALUE #( ( selname = '_LGORT'  kind = 'S' sign = 'I' option = 'EQ' low = '2025' )
+                          ( selname = '_MATNR'  kind = 'S' sign = 'I' option = 'EQ' low = 'CRDLP' )
+                         ).
+   DATA(Vari_desc)  =  VALUE varid( report = lv_report
+                                    variant = lv_variant ).
+
+
+  "Change Exist Variant
+   CALL FUNCTION 'RS_CHANGE_CREATED_VARIANT'
+  EXPORTING
+    CURR_REPORT              = lv_report
+    curr_variant             = lv_variant
+    VARI_DESC                = Vari_desc
+  TABLES
+    vari_contents       = lt_rsparams.
 
   " 2. Add the step to the job (Execute report)
   CALL FUNCTION 'JOB_SUBMIT'
@@ -28,6 +48,7 @@ START-OF-SELECTION.
       jobname               = lv_jobname
       report                = lv_report
       authcknam             = lv_auth_user  "The user under which the step will run
+      variant               = lv_variant
     EXCEPTIONS
       bad_reportname        = 1
       bad_variantname       = 2
