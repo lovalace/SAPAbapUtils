@@ -3,7 +3,7 @@ REPORT zdemo001.
  DATA:
   lv_jobname    TYPE tbtcjob-jobname, "JOB Name
   lv_jobcount   TYPE tbtcjob-jobcount,
-  lv_auth_user  TYPE sy-uname VALUE 'EKARABULUT', " User who will run the job
+  lv_auth_user  TYPE sy-uname VALUE 'OTHER_USER', " User who will run the job
   lv_report     TYPE sy-repid VALUE 'ZEK_DEMO00002',
   lv_variant    TYPE RALDB-VARIANT VALUE 'TEST_VARI',
   lt_rsparams   TYPE  TABLE OF RSPARAMS,
